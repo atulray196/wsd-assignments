@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bing Maps Example</title>
+   <script type="text/javascript" src="https://www.bing.com/api/maps/mapcontrol?callback=loadMap&key=AmJWoIZeLhmRf5UV0NpUdbwb_Gg9jhvuqSvYl1JdXru_3mX8AX7o2S45-WyR8iyk" async defer></script>
+  <style>
+   html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Set the map container to take up the remaining height */
+        #mapContainer {
+            height: calc(100% - 20px); /* Leave some space for the text above */
+            position: relative;
+        }
+
+        /* Style the text above the map */
+        #locationInfo {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: white;
+        }
+  </style>
+</head>
+<body>
+  <button onclick="getLocation()">Get My Location</button>
+  <div id="map"></div>
+  <script>
+    var map;
+
+    function loadMap() {
+      map = new Microsoft.Maps.Map(document.getElementById('map'), {
+        credentials: 'AmJWoIZeLhmRf5UV0NpUdbwb_Gg9jhvuqSvYl1JdXru_3mX8AX7o2S45-WyR8iyk'
+      });
+    }
+
+    function getLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(locateSuccess, locateFail);
+      } else {
+        alert("Geolocation is not supported by this browser.");
+      }
+    }
+
+    function locateSuccess(position) {
+      var location = new Microsoft.Maps.Location(position.coords.latitude, position.coords.longitude);
+      map.setView({ center: location, zoom: 12 });
+
+      var pushpin = new Microsoft.Maps.Pushpin(location, { color: 'blue' });
+      map.entities.push(pushpin);
+
+      var label = new Microsoft.Maps.Pushpin(location, { text: 'You are here', color: 'red' });
+      map.entities.push(label);
+
+      var circle = new Microsoft.Maps.Circle(location, position.coords.accuracy, {
+        strokeColor: 'blue',
+        strokeThickness: 2,
+        fillColor: 'blue',
+        fillOpacity: 0.2
+      });
+      map.entities.push(circle);
+    }
+
+    function locateFail(error) {
+      alert("Geolocation failed. Error code: " + error.code + ", Message: " + error.message);
+    }
+
+    window.onload = function() {
+      loadMap();
+    };
+  </script>
+</body>
+</html>
